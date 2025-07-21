@@ -1,0 +1,142 @@
+
+package project1;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class project1 extends JFrame implements ActionListener {
+    private double balance = 1000.0;
+    private static final String CORRECT_PIN = "1234";
+
+    // Components for Login Window
+    private JFrame loginFrame;
+    private JPasswordField pinField;
+    private JButton loginButton;
+
+    // Components for ATM Window
+    private JLabel welcomeLabel, balanceLabel;
+    private JTextField amountField;
+    private JButton withdrawButton, depositButton, checkBalanceButton, transferButton, okButton;
+
+    public project1() {
+        createLoginWindow();
+    }
+
+    private void createLoginWindow() {
+        loginFrame = new JFrame("EMMA BANK");
+        loginFrame.setSize(300, 150);
+        loginFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        loginFrame.setLocationRelativeTo(null);
+        loginFrame.setLayout(new GridLayout(3, 1, 5, 5));
+
+        JLabel pinLabel = new JLabel("Enter your 4-digit PIN:", SwingConstants.CENTER);
+        pinField = new JPasswordField();
+        loginButton = new JButton("Login");
+        loginButton.addActionListener(this);
+
+        loginFrame.add(pinLabel);
+        loginFrame.add(pinField);
+        loginFrame.add(loginButton);
+
+        loginFrame.setVisible(true);
+    }
+
+    private void createATMWindow() {
+        setTitle("Light Bank ATM Simulator");
+        setSize(400, 300);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        setLayout(new GridLayout(7, 1, 5, 5));
+
+        welcomeLabel = new JLabel("Welcome to Light Bank", SwingConstants.CENTER);
+        balanceLabel = new JLabel("Current Balance: $" + balance, SwingConstants.CENTER);
+        amountField = new JTextField();
+
+        withdrawButton = new JButton("Withdraw");
+        depositButton = new JButton("Deposit");
+        checkBalanceButton = new JButton("Check Balance");
+        transferButton = new JButton("Transfer");
+        okButton = new JButton("OK");
+
+        withdrawButton.addActionListener(this);
+        depositButton.addActionListener(this);
+        checkBalanceButton.addActionListener(this);
+        transferButton.addActionListener(this);
+        okButton.addActionListener(this);
+
+        add(welcomeLabel);
+        add(balanceLabel);
+        add(amountField);
+        add(withdrawButton);
+        add(depositButton);
+        add(checkBalanceButton);
+        add(transferButton);
+        add(okButton);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Login button pressed
+        if (e.getSource() == loginButton) {
+            String enteredPIN = new String(pinField.getPassword());
+            if (enteredPIN.equals(CORRECT_PIN)) {
+                loginFrame.dispose();  // Close login window
+                createATMWindow();     // Open ATM window
+                setVisible(true);      // Show ATM interface
+            } else {
+                JOptionPane.showMessageDialog(loginFrame, "Incorrect PIN. Try again.");
+            }
+            return;
+        }
+
+        // ATM button actions
+        String input = amountField.getText();
+        double amount = 0;
+
+        try {
+            if (!input.isEmpty()) {
+                amount = Double.parseDouble(input);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number.");
+            return;
+        }
+
+        if (e.getSource() == withdrawButton) {
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                JOptionPane.showMessageDialog(this, "Withdrawal successful.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid withdrawal amount.");
+            }
+        } else if (e.getSource() == depositButton) {
+            if (amount > 0) {
+                balance += amount;
+                JOptionPane.showMessageDialog(this, "Deposit successful.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid deposit amount.");
+            }
+        } else if (e.getSource() == checkBalanceButton) {
+            JOptionPane.showMessageDialog(this, "Current Balance: $" + balance);
+        } else if (e.getSource() == transferButton) {
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                JOptionPane.showMessageDialog(this, "Transfer successful.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid transfer amount.");
+            }
+        } else if (e.getSource() == okButton) {
+            amountField.setText("");
+        }
+
+        balanceLabel.setText("Current Balance: $" + balance);
+    }
+
+    public static void main(String[] args) {
+        new project1();
+    }
+}
+
+
